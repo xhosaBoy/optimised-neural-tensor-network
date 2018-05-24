@@ -66,8 +66,8 @@ def run_training():
         corrupt_placeholder = tf.placeholder(tf.bool, shape=(1)) # Which of e1 or e2 to corrupt?
         inference = ntn.inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_to_wordvec, \
                 num_entities, num_relations, slice_size, batch_size, False, label_placeholders)
-        loss = ntn.loss(inference, params.regularization)
-        training = ntn.training(loss, params.learning_rate)
+        # loss = ntn.loss(inference, params.regularization)
+        # training = ntn.training(loss, params.learning_rate)
         # evaluate = ntn.eval(inference)
 
         # Create a session for running Ops on the Graph.
@@ -77,7 +77,8 @@ def run_training():
         init = tf.initialize_all_variables()
         sess.run(init)
         saver = tf.train.Saver(tf.trainable_variables())
-        for i in range(1, num_iters):
+        # for i in range(1, num_iters):
+        for i in range(1, 2):
             print("Starting iter " + str(i) + " " + str(datetime.datetime.now()))
             # randomised subjects, predicates, objects, for given predicate
             data_batch = get_batch(batch_size, indexed_training_data, num_entities, corrupt_size)
@@ -88,10 +89,12 @@ def run_training():
                 saver.save(sess, params.output_path + "/" + params.data_name + str(i) + '.sess')
 
             feed_dict = fill_feed_dict(relation_batches, params.train_both, batch_placeholders, label_placeholders, corrupt_placeholder)
-            _, loss_value = sess.run([training, loss], feed_dict=feed_dict)
+            # _, loss_value = sess.run([training, loss], feed_dict=feed_dict)
             # _, loss_value, (score_pos, score_neg) = sess.run([training, loss, evaluate], feed_dict=feed_dict)
-            # print("Loss: ", loss_value, "score_pos, score_neg: ", score_pos, score_neg)
+            preactivation = sess.run([inference], feed_dict=feed_dict)
 
+            # print("Loss: ", loss_value, "score_pos, score_neg: ", score_pos, score_neg)
+            print("Output preactivation:", preactivation[0].shape)
 
             #TODO: Eval against dev set?
 

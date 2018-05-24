@@ -18,7 +18,9 @@ def inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_
     ten_k = tf.constant([k])
     num_words = len(init_word_embeds)
     E = tf.Variable(init_word_embeds) # d=embed size
-    W = [tf.Variable(tf.truncated_normal([d, d, k])) for r in range(num_relations)]
+    # W = [tf.Variable(tf.truncated_normal([d, d, k])) for r in range(num_relations)]
+    W = tf.Variable(tf.truncated_normal([d, d, 1]))
+    print('W:', W)
     V = [tf.Variable(tf.zeros([k, 2 * d])) for r in range(num_relations)]
     b = [tf.Variable(tf.zeros([k, 1])) for r in range(num_relations)]
     U = [tf.Variable(tf.ones([1, k])) for r in range(num_relations)]
@@ -43,56 +45,67 @@ def inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_
         print("Relations loop " + str(r))
         # e1s, e2s, e_corrupts
         e1, e2, e3 = tf.split(1, 3, tf.cast(batch_placeholders[r], tf.int32)) #TODO: should the split dimension be 0 or 1?
+        print('e1:', e1)
         # combine wordvec id, wordvec parameters, and wordvec
         e1v = tf.transpose(tf.squeeze(tf.gather(entEmbed, e1, name='e1v' + str(r)), [1]))
+        e1r = tf.squeeze(tf.gather(entEmbed, e1, name='e1v' + str(r)), [1])
+        print('e1v:', e1v)
+        print('e1r:', e1r)
         e2v = tf.transpose(tf.squeeze(tf.gather(entEmbed, e2, name='e2v' + str(r)), [1]))
-        e3v = tf.transpose(tf.squeeze(tf.gather(entEmbed, e3, name='e3v' + str(r)), [1]))
-        e1v_pos = e1v
-        e2v_pos = e2v
-        e1v_neg = e1v
-        e2v_neg = e3v
-        num_rel_r = tf.expand_dims(tf.shape(e1v_pos)[1], 0)
+        e2r = tf.squeeze(tf.gather(entEmbed, e2, name='e2v' + str(r)), [1])
+        print('e2v:', e2v)
+        print('e2r:', e2r)
+
+        num_rel_r = tf.expand_dims(tf.shape(e1v)[1], 0)
         print('num_rel_r:', num_rel_r)
         preactivation_pos = list()
-        preactivation_neg = list()
 
         # print("Starting preactivation funcs")
-        for slice in range(k):
-            preactivation_pos.append(tf.reduce_sum(e1v_pos * tf.matmul(W[r][:, :, slice], e2v_pos), 0))
-            preactivation_neg.append(tf.reduce_sum(e1v_neg * tf.matmul(W[r][:, :, slice], e2v_neg), 0))
+        # for slice in range(k):
+        #     preactivation_pos.append(tf.reduce_sum(e1v * tf.matmul(W[:, :, slice], e2v), 0))
+        #     print('Embedding space:', W[:, :, slice])
+        #     print('preactivation:', preactivation_pos)
+
+        logits_e1 = tf.matmul(tf.reshape(e1r, [-1, 1, 100]), W)
+        logits = tf.matmul(e2r, tf.reshape(logits_e1, [100, -1]))
+        # logits_e2 = tf.matmul(W, e2v)
+        # logits = tf.matmul(tf.reshape(e2v, [-1, 100, 1]), logits_e1)
+        print('logits_e1:', logits_e1)
+        print('logits:', logits)
 
         preactivation_pos = tf.pack(preactivation_pos)
         print('preactivation_pos pack:', preactivation_pos)
-        preactivation_neg = tf.pack(preactivation_neg)
 
-        temp2_pos = tf.matmul(V[r], tf.concat(0, [e1v_pos, e2v_pos]))
-        temp2_neg = tf.matmul(V[r], tf.concat(0, [e1v_neg, e2v_neg]))
+    #     temp2_pos = tf.matmul(V[r], tf.concat(0, [e1v_pos, e2v_pos]))
+    #     temp2_neg = tf.matmul(V[r], tf.concat(0, [e1v_neg, e2v_neg]))
 
-        #print("   temp2_pos: "+str(temp2_pos.get_shape()))
-        preactivation_pos = preactivation_pos + temp2_pos + b[r]
-        print('preactivation_pos:', preactivation_pos)
-        preactivation_neg = preactivation_neg + temp2_neg + b[r]
+    #     #print("   temp2_pos: "+str(temp2_pos.get_shape()))
+    #     preactivation_pos = preactivation_pos + temp2_pos + b[r]
+    #     print('preactivation_pos:', preactivation_pos)
+    #     preactivation_neg = preactivation_neg + temp2_neg + b[r]
 
-        #print("Starting activation funcs")
-        activation_pos = tf.tanh(preactivation_pos)
-        activation_neg = tf.tanh(preactivation_neg)
-        print("activation_pos: " + str(activation_pos.get_shape()))
+    #     #print("Starting activation funcs")
+    #     activation_pos = tf.tanh(preactivation_pos)
+    #     activation_neg = tf.tanh(preactivation_neg)
+    #     print("activation_pos: " + str(activation_pos.get_shape()))
 
-        score_pos = tf.reshape(tf.matmul(U[r], activation_pos), num_rel_r)
-        score_neg = tf.reshape(tf.matmul(U[r], activation_neg), num_rel_r)
-        print("score_pos: " + str(score_pos.get_shape()))
-        if not is_eval:
-            predictions.append(tf.pack([score_pos, score_neg]))
-        else:
-            predictions.append(tf.pack([score_pos, tf.reshape(label_placeholders[r], num_rel_r)]))
-        #print("score_pos_and_neg: "+str(predictions[r].get_shape()))
+    #     score_pos = tf.reshape(tf.matmul(U[r], activation_pos), num_rel_r)
+    #     score_neg = tf.reshape(tf.matmul(U[r], activation_neg), num_rel_r)
+    #     print("score_pos: " + str(score_pos.get_shape()))
+    #     if not is_eval:
+    #         predictions.append(tf.pack([score_pos, score_neg]))
+    #     else:
+    #         predictions.append(tf.pack([score_pos, tf.reshape(label_placeholders[r], num_rel_r)]))
+    #     #print("score_pos_and_neg: "+str(predictions[r].get_shape()))
 
 
-    #print("Concating predictions")
-    predictions = tf.concat(1, predictions)
+    # #print("Concating predictions")
+    # predictions = tf.concat(1, predictions)
     #print(predictions.get_shape())
 
-    return predictions
+    # return predictions
+    return preactivation_pos
+    # return logits_e1
 
 
 def loss(predictions, regularization):
