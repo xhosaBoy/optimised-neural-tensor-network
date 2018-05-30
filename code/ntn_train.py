@@ -94,7 +94,7 @@ def run_training():
             preactivation = sess.run([inference], feed_dict=feed_dict)
 
             # print("Loss: ", loss_value, "score_pos, score_neg: ", score_pos, score_neg)
-            print("Output preactivation:", preactivation[0].shape)
+            # print("Output preactivation:", preactivation[0].shape)
 
             #TODO: Eval against dev set?
 
