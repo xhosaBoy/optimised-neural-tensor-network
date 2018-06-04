@@ -1,11 +1,10 @@
 import math
 
 data_number = 0 #0 - Wordnet, 1 - Freebase
-if data_number == 0: data_name = 'Wordnet'
-else: data_name = 'Freebase'
+data_name = 'Wordnet' if data_number == 0 else 'Freebase'
 
-data_path = '../data/'+data_name
-output_path = '../output/'+data_name+'/'
+data_path = '../data/' + data_name
+output_path = '../output/' + data_name+'/'
 
 num_iter = 10
 train_both = False
