@@ -10,7 +10,7 @@ entities_string='/entities.txt'
 relations_string='/relations.txt'
 embeds_string='/initEmbed.mat'
 training_string='/train.txt'
-test_string='/test.txt'
+test_string='/testII.txt'
 dev_string='/dev.txt'
 
 #input: path of dataset to be used
@@ -28,7 +28,6 @@ def load_relations(data_path=params.data_path):
     relations_list = relations_file.read().strip().split('\n')
     relations_file.close()
     return relations_list
-
 
 #input: path of dataset to be used
 #output: python dict from entity string->1x100 vector embedding of entity as precalculated
