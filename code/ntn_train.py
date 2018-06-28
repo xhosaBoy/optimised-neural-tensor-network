@@ -11,8 +11,8 @@ def data_to_indexed(data, entities, relations):
     entity_to_index = {entities[i] : i for i in range(len(entities))}
     relation_to_index = {relations[i] : i for i in range(len(relations))}
     # build subject, predict, object
-    indexed_data = [(entity_to_index[data[i][0]], relation_to_index[data[i][1]],\
-            entity_to_index[data[i][2]]) for i in range(len(data))]
+    indexed_data = [(entity_to_index[data[i][0]], relation_to_index[data[i][1]], \
+                     entity_to_index[data[i][2]]) for i in range(len(data))]
     # sbujet, predicet , object
     return indexed_data
 
@@ -25,12 +25,12 @@ def get_batch(batch_size, data, num_entities, corrupt_size):
 
 def split_batch(data_batch, num_relations):
     batches = [[] for i in range(num_relations)]
-    for e1,r,e2,e3 in data_batch:
-        batches[r].append((e1,e2,e3))
+    for e1, r, e2, e3 in data_batch:
+        batches[r].append((e1, e2, e3))
     return batches
 
 def fill_feed_dict(batches, train_both, batch_placeholders, label_placeholders, corrupt_placeholder):
-    feed_dict = {corrupt_placeholder: [train_both and np.random.random()>0.5]}
+    feed_dict = {corrupt_placeholder: [train_both and np.random.random() > 0.5]}
     for i in range(len(batch_placeholders)):
         feed_dict[batch_placeholders[i]] = batches[i]
         feed_dict[label_placeholders[i]] = [[0.0] for j in range(len(batches[i]))]
@@ -49,7 +49,7 @@ def run_training():
     indexed_training_data = data_to_indexed(raw_training_data, entities_list, relations_list)
     print("Load embeddings...")
     # wordvecs, ids
-    (init_word_embeds, entity_to_wordvec) = ntn_input.load_init_embeds(params.data_path)
+    init_word_embeds, entity_to_wordvec = ntn_input.load_init_embeds(params.data_path)
 
     num_entities = len(entities_list)
     num_relations = len(relations_list)
@@ -79,17 +79,18 @@ def run_training():
         sess.run(init)
         saver = tf.train.Saver(tf.trainable_variables())
         for i in range(1, num_iters):
-            print("Starting iter "+str(i)+" "+str(datetime.datetime.now()))
+            print("Starting iter "+ str(i) + " " + str(datetime.datetime.now()))
             # randomised subjects, predicates, objects, for given predicate
             data_batch = get_batch(batch_size, indexed_training_data, num_entities, corrupt_size)
             # relation, e1s, e2s, e_corrupts
             relation_batches = split_batch(data_batch, num_relations)
 
             if i % params.save_per_iter == 0:
-                saver.save(sess, params.output_path+"/"+params.data_name+str(i)+'.sess')
+                saver.save(sess, params.output_path + "/" + params.data_name + str(i) + '.sess')
 
             feed_dict = fill_feed_dict(relation_batches, params.train_both, batch_placeholders, label_placeholders, corrupt_placeholder)
             _, loss_value = sess.run([training, loss], feed_dict=feed_dict)
+            print('loss_value:', loss_value)
             # _, loss_value, (score_pos, score_neg) = sess.run([training, loss, evaluate], feed_dict=feed_dict)
             # print("Loss: ", loss_value, "score_pos, score_neg: ", score_pos, score_neg)
 
