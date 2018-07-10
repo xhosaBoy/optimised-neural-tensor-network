@@ -18,21 +18,25 @@ def data_to_indexed(data, entities, relations):
 
 def get_batch(batch_size, data, num_entities, corrupt_size):
     # return entity 1, entity 2 plus random corrupt entity
-    random_indices = random.sample(range(len(data)), batch_size)
+    data_train = data[:len(data) - 3001]
+    data_val = data[3001:]
+    random_indices = random.sample(range(len(data_train)), batch_size)
+    batch = [(data_train[i][0], data_train[i][1], data_train[i][2], random.randint(0, num_entities-1)) \
+    for i in random_indices for j in range(corrupt_size)]
     # batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
-    # for i in random_indices for j in range(corrupt_size)]
-    batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
-    for i in range(batch_size) for j in range(corrupt_size)]
+    # for i in range(batch_size) for j in range(corrupt_size)]
     # print('batch sample:', batch[0])
     return batch
 
 def get_batch_val(batch_size, data, num_entities, corrupt_size):
     # return entity 1, entity 2 plus random corrupt entity
-    random_indices = random.sample(range(len(data)), batch_size)
+    data_train = data[:len(data) - 3001]
+    data_val = data[3001:]
+    random_indices = random.sample(range(len(data_train)), batch_size)
     # batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
     # for i in random_indices for j in range(corrupt_size)]
-    batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
-    for i in range(batch_size + 1, batch_size + 3001) for j in range(corrupt_size)]
+    batch = [(data_val[i][0], data_val[i][1], data_val[i][2], random.randint(0, num_entities-1)) \
+    for i in range(len(data_val)) for j in range(corrupt_size)]
     # print('batch sample:', batch[0])
     return batch
 
@@ -130,19 +134,18 @@ def run_training():
             # acc = accuracy(predictions, batch_size)
             print('acc:', acc)
 
-         # Validation
-         # logits, targets = ntn.inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_to_wordvec, \
-         #        num_entities, num_relations, slice_size, batch_size, False, label_placeholders)
-         # eval_correct = ntn.eval(logits, targets)
-         # randomised subjects, predicates, objects, for given predicate
-        data_batch = get_batch_val(batch_size, indexed_training_data, num_entities, corrupt_size)
-        # relation, e1s, e2s, e_corrupts, targets
-        relation_batches = split_batch(data_batch, num_relations)
-        feed_dict = fill_feed_dict(relation_batches, params.train_both, batch_placeholders, label_placeholders, corrupt_placeholder, num_relations)
+            # Validation
+            if i % params.save_per_iter == 0:
+              print('Computing validation...')
+              # randomised subjects, predicates, objects, for given predicate
+              data_batch = get_batch_val(batch_size, indexed_training_data, num_entities, corrupt_size)
+              # relation, e1s, e2s, e_corrupts, targets
+              relation_batches = split_batch(data_batch, num_relations)
+              feed_dict = fill_feed_dict(relation_batches, params.train_both, batch_placeholders, label_placeholders, corrupt_placeholder, num_relations)
 
-        cost_val, acc_val = sess.run([loss, eval_correct], feed_dict=feed_dict)
-        print('cost_val:', cost_val)
-        print('acc_val:', acc_val)
+              cost_val, acc_val = sess.run([loss, eval_correct], feed_dict=feed_dict)
+              print('cost_val:', cost_val)
+              print('acc_val:', acc_val)
 
 def main(argv):
     run_training()
