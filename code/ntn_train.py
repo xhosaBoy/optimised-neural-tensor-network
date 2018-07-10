@@ -17,10 +17,12 @@ def data_to_indexed(data, entities, relations):
     return indexed_data
 
 def get_batch(batch_size, data, num_entities, corrupt_size):
-    random_indices = random.sample(range(len(data)), batch_size)
+    # random_indices = random.sample(range(len(data)), batch_size)
     #data[i][0] = e1, data[i][1] = r, data[i][2] = e2, random=e3 (corrupted)
-    batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1))\
-    for i in random_indices for j in range(corrupt_size)]
+    # batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1))\
+    # for i in random_indices for j in range(corrupt_size)]
+    batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
+    for i in range(batch_size) for j in range(corrupt_size)]
     return batch
 
 def split_batch(data_batch, num_relations):
@@ -35,6 +37,16 @@ def fill_feed_dict(batches, train_both, batch_placeholders, label_placeholders, 
         feed_dict[batch_placeholders[i]] = batches[i]
         feed_dict[label_placeholders[i]] = [[0.0] for j in range(len(batches[i]))]
     return feed_dict
+
+def accuracy(predictions, num_examples):
+    # print("Beginning building accuracy")
+    true_count = 0.
+    for i in range(len(predictions[0])):
+        if predictions[0][i] > 0:
+            true_count += 1.0
+    precision = float(true_count) / float(num_examples)
+
+    return precision
 
 def run_training():
     print("Begin!")
@@ -68,6 +80,8 @@ def run_training():
         inference = ntn.inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_to_wordvec, \
                 num_entities, num_relations, slice_size, batch_size, False, label_placeholders)
         loss = ntn.loss(inference, params.regularization)
+        eval_correct = ntn.eval(inference)
+
         training = ntn.training(loss, params.learning_rate)
         # evaluate = ntn.eval(inference)
 
@@ -89,8 +103,11 @@ def run_training():
                 saver.save(sess, params.output_path + "/" + params.data_name + str(i) + '.sess')
 
             feed_dict = fill_feed_dict(relation_batches, params.train_both, batch_placeholders, label_placeholders, corrupt_placeholder)
-            _, loss_value = sess.run([training, loss], feed_dict=feed_dict)
-            print('loss_value:', loss_value)
+            _, cost, predictions = sess.run([training, loss, eval_correct], feed_dict=feed_dict)
+            print('cost:', cost)
+
+            acc = accuracy(predictions, batch_size)
+            print('acc:', acc)
             # _, loss_value, (score_pos, score_neg) = sess.run([training, loss, evaluate], feed_dict=feed_dict)
             # print("Loss: ", loss_value, "score_pos, score_neg: ", score_pos, score_neg)
 

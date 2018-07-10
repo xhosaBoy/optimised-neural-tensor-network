@@ -6,12 +6,12 @@ import tensorflow as tf
 def data_to_indexed(data, entities, relations):
     entity_to_index = {entities[i] : i for i in range(len(entities))}
     relation_to_index = {relations[i] : i for i in range(len(relations))}
-    indexed_data = [(entity_to_index[data[i][0]], relation_to_index[data[i][1]],\
+    indexed_data = [(entity_to_index[data[i][0]], relation_to_index[data[i][1]], \
             entity_to_index[data[i][2]], float(data[i][3])) for i in range(len(data))]
     return indexed_data
 
 def fill_feed_dict(batches, labels, train_both, batch_placeholders, label_placeholders, corrupt_placeholder):
-    feed_dict = {corrupt_placeholder: [train_both and np.random.random()>0.5]}
+    feed_dict = {corrupt_placeholder: [train_both and np.random.random() > 0.5]}
     for i in range(len(batch_placeholders)):
         feed_dict[batch_placeholders[i]] = batches[i]
     for i in range(len(label_placeholders)):
@@ -23,8 +23,8 @@ def fill_feed_dict(batches, labels, train_both, batch_placeholders, label_placeh
 def data_to_relation_sets(data_batch, num_relations):
     batches = [[] for i in range(num_relations)]
     labels = [[] for i in range(num_relations)]
-    for e1,r,e2,label in data_batch:
-        batches[r].append((e1,e2,1))
+    for e1, r, e2, label in data_batch:
+        batches[r].append((e1, e2, 1))
         labels[r].append([label])
     return (batches, labels)
 
@@ -41,7 +41,7 @@ def run_evaluation():
     num_relations = len(relations_list)
 
     slice_size = params.slice_size
-    (init_word_embeds, entity_to_wordvec) = ntn_input.load_init_embeds(params.data_path)
+    init_word_embeds, entity_to_wordvec = ntn_input.load_init_embeds(params.data_path)
     batches, labels = data_to_relation_sets(test_data, num_relations)
 
 
@@ -55,7 +55,8 @@ def run_evaluation():
         eval_correct = ntn.eval(inference)
         saver = tf.train.Saver()
 
-        saver.restore(sess, params.output_path+'around100/Wordnet70.sess')
+        # saver.restore(sess, params.output_path+'around100/Wordnet70.sess')
+        saver.restore(sess, params.output_path + 'Wordnet90.sess')
         #init = tf.initialize_all_variables()
         #sess.run(init)
         print(do_eval(sess, eval_correct, batch_placeholders, label_placeholders, corrupt_placeholder, batches, labels, batch_size))
@@ -67,11 +68,12 @@ def do_eval(sess, eval_correct, batch_placeholders, label_placeholders, corrupt_
     feed_dict = fill_feed_dict(test_batches, test_labels, params.train_both, batch_placeholders, label_placeholders, corrupt_placeholder)
     #predictions,labels = sess.run(eval_correct, feed_dict)
     predictions, labels = sess.run(eval_correct, feed_dict)
-    print(predictions)
+    print('predictions:', predictions)
+    print('labels:', labels)
     for i in range(len(predictions[0])):
-        if predictions[0][i]>0 and labels[0][i]==1:
-            true_count +=1.0
-        elif predictions[0][i]<0 and labels[0][i]==-1:
+        if predictions[0][i] > 0 and labels[0][i] == 1:
+            true_count += 1.0
+        elif predictions[0][i] < 0 and labels[0][i] == -1:
             true_count +=1.0
     precision = float(true_count) / float(num_examples)
     return precision

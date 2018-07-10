@@ -60,8 +60,8 @@ def inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_
 
         #print("Starting preactivation funcs")
         for slice in range(k):
-            preactivation_pos.append(tf.reduce_sum(e1v_pos*tf.matmul(W[r][:,:,slice], e2v_pos), 0))
-            preactivation_neg.append(tf.reduce_sum(e1v_neg*tf.matmul(W[r][:,:,slice], e2v_neg), 0))
+            preactivation_pos.append(tf.reduce_sum(e1v_pos * tf.matmul(W[r][:, :, slice], e2v_pos), 0))
+            preactivation_neg.append(tf.reduce_sum(e1v_neg * tf.matmul(W[r][:, :, slice], e2v_neg), 0))
 
         preactivation_pos = tf.pack(preactivation_pos)
         preactivation_neg = tf.pack(preactivation_neg)
@@ -78,7 +78,7 @@ def inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_
         activation_neg = tf.tanh(preactivation_neg)
 
         # score_pos = tf.reshape(tf.matmul(U[r], activation_pos), num_rel_r)
-        score_pos = tf.sigmoid(tf.reshape(tf.matmul(U[r], activation_pos), num_rel_r))
+        score_pos = tf.reshape(tf.matmul(U[r], activation_pos), num_rel_r)
         score_neg = tf.reshape(tf.matmul(U[r], activation_neg), num_rel_r)
         #print("score_pos: "+str(score_pos.get_shape()))
         if not is_eval:
@@ -107,9 +107,9 @@ def cross_entropy_tf(predictions):
 def loss(predictions, regularization):
 
     print("Beginning building loss")
-    # temp1 = tf.maximum(tf.sub(predictions[1, :], predictions[0, :]) + 1, 0)
-    # temp1 = tf.reduce_sum(temp1)
-    temp1 = cross_entropy_tf(predictions[0, :])
+    temp1 = tf.maximum(tf.sub(predictions[1, :], predictions[0, :]) + 1, 0)
+    temp1 = tf.reduce_sum(temp1)
+    # temp1 = cross_entropy_tf(predictions[0, :])
 
     temp2 = tf.sqrt(sum([tf.reduce_sum(tf.square(var)) for var in tf.trainable_variables()]))
 
@@ -144,7 +144,7 @@ def eval(predictions):
     # cast tensor to int and return number of correct labels
     #return tf.reduce_sum(tf.cast(correct, tf.int32))
     # return score_pos, score_neg
-    return inference, labels
+    return inference
 
 
 
