@@ -94,8 +94,8 @@ def inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_
         print('preactivation_pos:', preactivation_pos)
         # preactivation_neg = preactivation_neg + temp2_neg + b[r]
 
-        #print("Starting activation funcs")
-        #activation_pos = tf.tanh(preactivation_pos)
+        # print("Starting activation funcs")
+        # activation_pos = tf.tanh(preactivation_pos)
         activation_pos = tf.sigmoid(preactivation_pos)
         # activation_pos = tf.nn.relu(preactivation_pos)
         # activation_pos = tf.minimum(activation_pos, 1)

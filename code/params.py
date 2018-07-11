@@ -4,10 +4,10 @@ data_number = 0 #0 - Wordnet, 1 - Freebase
 if data_number == 0: data_name = 'Wordnet'
 else: data_name = 'Freebase'
 
-data_path = '../data/'+data_name
-output_path = '../output/'+data_name+'/'
+data_path = '../data/' + data_name
+output_path = '../output/' + data_name +'/'
 
-num_iter = 100
+num_iter = 101
 train_both = False
 batch_size = 10000
 # corrupt_size = 10 # how many negative examples are given for each positive example?
