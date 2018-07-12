@@ -17,7 +17,9 @@ slice_size = 3 #depth of tensor for each relation
 regularization = 0. #parameter \lambda used in L2 normalization
 in_tensor_keep_normal = False
 save_per_iter = 10
+eval_every = 10
 learning_rate = 0.1
+early_stopping = True
 
 output_dir = ''
 

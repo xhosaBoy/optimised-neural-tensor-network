@@ -92,6 +92,7 @@ def run_training():
     batch_size = params.batch_size
     corrupt_size = params.corrupt_size
     slice_size = params.slice_size
+    early_stopping = params.early_stopping
 
     with tf.Graph().as_default():
         print("Starting to build graph "+str(datetime.datetime.now()))
@@ -140,7 +141,7 @@ def run_training():
             print('acc:', acc)
 
             # Validation
-            if i % params.save_per_iter == 0:
+            if i % params.eval_every == 0:
               print('Computing validation...')
               # randomised subjects, predicates, objects, for given predicate
               data_batch = get_batch_val(batch_size, indexed_training_data, num_entities, corrupt_size)
@@ -153,7 +154,7 @@ def run_training():
               print('acc_val:', acc_val)
 
               # early stopping
-              if acc_val <= prev_acc_val:
+              if acc_val <= prev_acc_val and early_stopping:
                   print("Validation accuracy stopped improving, stopping training early after %d epochs!" % (i + 1))
                   break
 
