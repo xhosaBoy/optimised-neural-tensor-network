@@ -7,6 +7,8 @@ import numpy.matlib
 import random
 import datetime
 
+random.seed(2018)
+
 def data_to_indexed(data, entities, relations):
     entity_to_index = {entities[i] : i for i in range(len(entities))}
     relation_to_index = {relations[i] : i for i in range(len(relations))}
@@ -18,9 +20,10 @@ def data_to_indexed(data, entities, relations):
 
 def get_batch(batch_size, data, num_entities, corrupt_size):
     # return entity 1, entity 2 plus random corrupt entity
-    data_train = data[:len(data) - 20000]
-    data_val = data[len(data) - 20000:]
-    random_indices = random.sample(range(len(data_train)), len(data_train))
+    data_train = data[:len(data) - 2000]
+    # data_val = data[len(data) - 2000:]
+    random_indices = random.sample(range(len(data_train)), batch_size)
+    # random_indices = random.sample(range(len(data_train)), len(data_train))
     batch = [(data_train[i][0], data_train[i][1], data_train[i][2], random.randint(0, num_entities-1)) \
     for i in random_indices for j in range(corrupt_size)]
     # batch = [(data_train[i][0], data_train[i][1], data_train[i][2], random.randint(0, num_entities-1)) \
@@ -30,8 +33,8 @@ def get_batch(batch_size, data, num_entities, corrupt_size):
 
 def get_batch_val(batch_size, data, num_entities, corrupt_size):
     # return entity 1, entity 2 plus random corrupt entity
-    data_train = data[:len(data) - 20000]
-    data_val = data[len(data) - 20000:]
+    # data_train = data[:len(data) - 20000]
+    data_val = data[len(data) - 2000:]
     # random_indices = random.sample(range(len(data_train)), batch_size)
     # batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
     # for i in random_indices for j in range(corrupt_size)]
@@ -116,6 +119,8 @@ def run_training():
         init = tf.initialize_all_variables()
         sess.run(init)
         saver = tf.train.Saver(tf.trainable_variables())
+        prev_acc_val = 0
+
         for i in range(1, num_iters):
             print("Starting iter " + str(i) + " " + str(datetime.datetime.now()))
             # randomised subjects, predicates, objects, for given predicate
@@ -146,6 +151,13 @@ def run_training():
               cost_val, acc_val = sess.run([loss, eval_correct], feed_dict=feed_dict)
               print('cost_val:', cost_val)
               print('acc_val:', acc_val)
+
+              # early stopping
+              if acc_val <= prev_acc_val:
+                  print("Validation accuracy stopped improving, stopping training early after %d epochs!" % (i + 1))
+                  break
+
+              prev_acc_val = acc_val
 
 def main(argv):
     run_training()
