@@ -18,21 +18,21 @@ def data_to_indexed(data, entities, relations):
 
 def get_batch(batch_size, data, num_entities, corrupt_size):
     # return entity 1, entity 2 plus random corrupt entity
-    data_train = data[:len(data) - 2001]
-    data_val = data[2001:]
-    random_indices = random.sample(range(len(data_train)), batch_size)
+    data_train = data[:len(data) - 20000]
+    data_val = data[len(data) - 20000:]
+    random_indices = random.sample(range(len(data_train)), len(data_train))
     batch = [(data_train[i][0], data_train[i][1], data_train[i][2], random.randint(0, num_entities-1)) \
     for i in random_indices for j in range(corrupt_size)]
-    # batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
-    # for i in range(batch_size) for j in range(corrupt_size)]
+    # batch = [(data_train[i][0], data_train[i][1], data_train[i][2], random.randint(0, num_entities-1)) \
+    # for i in range(len(data_train)) for j in range(corrupt_size)]
     # print('batch sample:', batch[0])
     return batch
 
 def get_batch_val(batch_size, data, num_entities, corrupt_size):
     # return entity 1, entity 2 plus random corrupt entity
-    data_train = data[:len(data) - 2001]
-    data_val = data[2001:]
-    random_indices = random.sample(range(len(data_train)), batch_size)
+    data_train = data[:len(data) - 20000]
+    data_val = data[len(data) - 20000:]
+    # random_indices = random.sample(range(len(data_train)), batch_size)
     # batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
     # for i in random_indices for j in range(corrupt_size)]
     batch = [(data_val[i][0], data_val[i][1], data_val[i][2], random.randint(0, num_entities-1)) \

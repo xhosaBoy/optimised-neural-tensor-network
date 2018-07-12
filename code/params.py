@@ -9,7 +9,7 @@ output_path = '../output/' + data_name +'/'
 
 num_iter = 101
 train_both = False
-batch_size = 10000
+batch_size = 112581
 # corrupt_size = 10 # how many negative examples are given for each positive example?
 corrupt_size = 1 # how many negative examples are given for each positive example?
 embedding_size = 100
