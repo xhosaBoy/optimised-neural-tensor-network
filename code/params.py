@@ -1,20 +1,22 @@
 import math
 
-data_number = 0 #0 - Wordnet, 1 - Freebase
-if data_number == 0: data_name = 'Wordnet'
-else: data_name = 'Freebase'
+data_number = 0  # 0 - Wordnet, 1 - Freebase
+if data_number == 0:
+  data_name = 'Wordnet'
+else:
+  data_name = 'Freebase'
 
 data_path = '../data/' + data_name
-output_path = '../output/' + data_name +'/'
+output_path = '../output/' + data_name + '/'
 
-num_iter = 101
+num_iter = 501
 train_both = False
 batch_size = 10000
 # corrupt_size = 10 # how many negative examples are given for each positive example?
-corrupt_size = 1 # how many negative examples are given for each positive example?
+corrupt_size = 1  # how many negative examples are given for each positive example?
 embedding_size = 100
-slice_size = 3 #depth of tensor for each relation
-regularization = 0. #parameter \lambda used in L2 normalization
+slice_size = 3  # depth of tensor for each relation
+regularization = 0.  # parameter \lambda used in L2 normalization
 in_tensor_keep_normal = False
 save_per_iter = 10
 eval_every = 10
@@ -22,4 +24,3 @@ learning_rate = 0.1
 early_stopping = True
 
 output_dir = ''
-
