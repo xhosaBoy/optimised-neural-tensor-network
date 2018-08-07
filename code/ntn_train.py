@@ -22,6 +22,7 @@ def get_batch(batch_size, data, num_entities, corrupt_size):
     batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
     for i in random_indices for j in range(corrupt_size)]
     # print('batch sample:', batch[0])
+
     return batch
 
 def get_batch_val(batch_size, data, num_entities, corrupt_size):
@@ -32,6 +33,7 @@ def get_batch_val(batch_size, data, num_entities, corrupt_size):
     batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
     for i in range(batch_size + 1, batch_size + 3001) for j in range(corrupt_size)]
     # print('batch sample:', batch[0])
+    
     return batch
 
 def split_batch(data_batch, num_relations):
