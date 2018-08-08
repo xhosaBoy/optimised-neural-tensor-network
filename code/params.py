@@ -11,7 +11,7 @@ output_path = '../output/' + data_name + '/'
 
 num_iter = 501
 train_both = False
-batch_size = 10000
+batch_size = 50000
 # corrupt_size = 10 # how many negative examples are given for each positive example?
 corrupt_size = 1  # how many negative examples are given for each positive example?
 embedding_size = 100
@@ -21,6 +21,6 @@ in_tensor_keep_normal = False
 save_per_iter = 10
 eval_every = 10
 learning_rate = 0.1
-early_stopping = True
+early_stopping = False
 
 output_dir = ''

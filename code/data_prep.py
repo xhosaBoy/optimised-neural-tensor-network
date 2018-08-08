@@ -1,7 +1,9 @@
 import os
 from pprint import pprint
 
-dirname = os.path.split(os.path.dirname(__file__))[0]
+# dirname = os.path.split(os.path.dirname(__file__))[0]
+
+dirname = '/mnt/disks/smd1/workspace/deep-knowledge-modelling/'
 filename = 'data/Wordnet/testIII.txt'
 path = os.path.join(dirname, filename)
 print(path)
@@ -42,7 +44,7 @@ with open(path_entity, 'a') as fhand:
     fhand.write(str(entity))
     fhand.write('\n')
 
-# with open(path_relation, 'a') as fhand:
-#   for relation in relation_set:
-#     fhand.write(str(relation))
-#     fhand.write('\n')
+with open(path_relation, 'a') as fhand:
+  for relation in relation_set:
+    fhand.write(str(relation))
+    fhand.write('\n')

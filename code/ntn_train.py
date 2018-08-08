@@ -26,7 +26,7 @@ def data_to_indexed(data, entities, relations):
 
 def get_batch(batch_size, data, num_entities, corrupt_size):
   # return entity 1, entity 2 plus random corrupt entity
-  data_train = data[:len(data) - 2000]
+  data_train = data[:len(data) - 15000]
   # data_val = data[len(data) - 2000:]
   random_indices = random.sample(range(len(data_train)), batch_size)
   # random_indices = random.sample(range(len(data_train)), len(data_train))
@@ -41,7 +41,7 @@ def get_batch(batch_size, data, num_entities, corrupt_size):
 def get_batch_val(batch_size, data, num_entities, corrupt_size):
   # return entity 1, entity 2 plus random corrupt entity
   # data_train = data[:len(data) - 20000]
-  data_val = data[len(data) - 2000:]
+  data_val = data[len(data) - 15000:]
   # random_indices = random.sample(range(len(data_train)), batch_size)
   # batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities-1)) \
   # for i in random_indices for j in range(corrupt_size)]
