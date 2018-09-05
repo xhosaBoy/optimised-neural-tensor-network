@@ -20,7 +20,7 @@ def inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_
   k = slice_size
   ten_k = tf.constant([k])
   num_words = len(init_word_embeds)
-  E = tf.Variable(init_word_embeds)  # d=embed size
+  E = tf.Variable(init_word_embeds)  # d = embed size
   W = [tf.Variable(tf.truncated_normal([d, d, k]))
        for r in range(num_relations)]
   V = [tf.Variable(tf.zeros([k, 2 * d])) for r in range(num_relations)]
@@ -64,7 +64,7 @@ def inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_
     #print("W[r][:,:,slice]: "+str(W[r][:,:,0].get_shape()))
     #print("e2v_pos: "+str(e2v_pos.get_shape()))
 
-    #print("Starting preactivation funcs")
+    # print("Starting preactivation funcs")
     for slice in range(k):
       preactivation_pos.append(tf.reduce_sum(
           e1v_pos * tf.matmul(W[r][:, :, slice], e2v_pos), 0))
@@ -77,7 +77,7 @@ def inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_
     temp2_pos = tf.matmul(V[r], tf.concat(0, [e1v_pos, e2v_pos]))
     temp2_neg = tf.matmul(V[r], tf.concat(0, [e1v_neg, e2v_neg]))
 
-    #print("   temp2_pos: "+str(temp2_pos.get_shape()))
+    #print("   temp2_pos: " + str(temp2_pos.get_shape()))
     preactivation_pos = preactivation_pos + temp2_pos + b[r]
     preactivation_neg = preactivation_neg + temp2_neg + b[r]
 
@@ -87,15 +87,10 @@ def inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_
 
     score_pos = tf.reshape(tf.matmul(U[r], activation_pos), num_rel_r)
     score_neg = tf.reshape(tf.matmul(U[r], activation_neg), num_rel_r)
-    #print("score_pos: "+str(score_pos.get_shape()))
-    # if not is_eval:
-    #     predictions.append(tf.pack([score_pos, score_neg]))
-    # else:
-    #     predictions.append(
-    #         tf.pack([score_pos, tf.reshape(label_placeholders[r], num_rel_r)]))
+
     predictions_train.append(tf.pack([score_pos, score_neg]))
     predictions_eval.append(tf.pack([score_pos, tf.reshape(label_placeholders[r], num_rel_r)]))
-    #print("score_pos_and_neg: "+str(predictions[r].get_shape()))
+    # print("score_pos_and_neg: "+str(predictions[r].get_shape()))
 
   #print("Concating predictions")
   predictions_train = tf.concat(1, predictions_train)
@@ -106,7 +101,6 @@ def inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_
 
 
 def loss(predictions, regularization):
-
   print("Beginning building loss")
   temp1 = tf.maximum(tf.sub(predictions[1, :], predictions[0, :]) + 1, 0)
   temp1 = tf.reduce_sum(temp1)
@@ -136,7 +130,7 @@ def eval(predictions):
   #print("inference "+str(inference.get_shape()))
   #print("labels "+str(labels.get_shape()))
   # get number of correct labels for the logits (if prediction is top 1 closest to actual)
-  #correct = tf.nn.in_top_k(inference, labels, 1)
+  # correct = tf.nn.in_top_k(inference, labels, 1)
   # cast tensor to int and return number of correct labels
   # return tf.reduce_sum(tf.cast(correct, tf.int32))
   return inference, labels

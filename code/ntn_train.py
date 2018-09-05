@@ -2,16 +2,16 @@
 import random
 import datetime
 
+# 3rd party
+import tensorflow as tf
+import numpy as np
+import numpy.matlib
+
 # internal
 import ntn_input
 import ntn
 import ntn_plot
 import params
-
-# 3rd party
-import tensorflow as tf
-import numpy as np
-import numpy.matlib
 
 
 def data_to_indexed_train(data, entities, relations):
@@ -25,10 +25,16 @@ def data_to_indexed_train(data, entities, relations):
 def data_to_indexed_eval(data, entities, relations):
   entity_to_index = {entities[i]: i for i in range(len(entities))}
   relation_to_index = {relations[i]: i for i in range(len(relations))}
-  # indexed_data = [(entity_to_index[data[i][0]], relation_to_index[data[i][1]],
-  #                  entity_to_index[data[i][2]], float(data[i][3])) for i in range(len(data))]
   indexed_data = [(entity_to_index[data[i][0]], relation_to_index[data[i][1]],
                    entity_to_index[data[i][2]], 1.0) for i in range(len(data))]
+  return indexed_data
+
+
+def data_to_indexed_validation_eval(data, entities, relations):
+  entity_to_index = {entities[i]: i for i in range(len(entities))}
+  relation_to_index = {relations[i]: i for i in range(len(relations))}
+  indexed_data = [(entity_to_index[data[i][0]], relation_to_index[data[i][1]],
+                   entity_to_index[data[i][2]], data[i][3]) for i in range(len(data))]
   return indexed_data
 
 
@@ -36,7 +42,15 @@ def data_to_indexed_validation(data, entities, relations):
   entity_to_index = {entities[i]: i for i in range(len(entities))}
   relation_to_index = {relations[i]: i for i in range(len(relations))}
   indexed_data = [(entity_to_index[data[i][0]], relation_to_index[data[i][1]],
-                   entity_to_index[data[i][2]], float(data[i][3])) for i in range(len(data))]
+                   entity_to_index[data[i][2]]) for i in range(len(data))]
+  return indexed_data
+
+
+def data_to_indexed_validation(data, entities, relations):
+  entity_to_index = {entities[i]: i for i in range(len(entities))}
+  relation_to_index = {relations[i]: i for i in range(len(relations))}
+  indexed_data = [(entity_to_index[data[i][0]], relation_to_index[data[i][1]],
+                   entity_to_index[data[i][2]], 1.0) for i in range(len(data))]
   return indexed_data
 
 
@@ -46,7 +60,15 @@ def get_batch(batch_size, data, num_entities, corrupt_size):
   # random.shuffle(random_indices)
   # data[i][0] = e1, data[i][1] = r, data[i][2] = e2, random=e3 (corrupted)
   batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities - 1))
-           for i in random_indices for j in range(corrupt_size)]
+           for i in random_indices]
+  return batch, random_indices
+
+
+def get_batch_validation(batch_size, data, num_entities, corrupt_size):
+  random_indices = list(range(len(data)))
+  random.shuffle(random_indices)
+  batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities - 1))
+           for i in random_indices]
   return batch, random_indices
 
 
@@ -60,6 +82,13 @@ def split_batch(data_batch, num_relations):
 def split_batch_eval(data, random_indices, num_entities):
   batch = [(data[i][0], data[i][1], data[i][2], data[i][3]) for i in random_indices]
   return batch
+
+
+def split_batch_validation(data_batch, num_relations):
+  batches = [[] for i in range(num_relations)]
+  for e1, r, e2, e3 in data_batch:
+    batches[r].append((e1, e2, e3))
+  return batches
 
 
 def fill_feed_dict_train(batches, train_both, batch_placeholders, label_placeholders, corrupt_placeholder):
@@ -87,19 +116,17 @@ def data_to_relation_sets(data_batch, num_relations):
   for e1, r, e2, label in data_batch:
     batches[r].append((e1, e2, 1))
     labels[r].append([label])
-  return (batches, labels)
+  return batches, labels
 
 
 def run_training(
-        slice_size=10,
+        slice_size=3,
         batch_size=10000,
         corrupt_size=10,
         lr=1e-3,
         l2_lambda=1e-4,
         mom_coeff=0.5,
-        optimizer_fn=tf.train.MomentumOptimizer(
-        learning_rate=1e-3,
-        momentum=0.5),
+        optimizer_fn=tf.train.AdamOptimizer(learning_rate=1e-3),
         val_per_iter=10,
         stop_early=True,
         num_epochs=100):
@@ -116,26 +143,24 @@ def run_training(
   indexed_eval_data = data_to_indexed_eval(raw_training_data, entities_list, relations_list)
 
   print("Load validation data...")
-  validation_data = ntn_input.load_dev_data(params.data_path)
-  print("Load entities and relations...")
+  raw_validation_data = ntn_input.load_dev_data(params.data_path)
+  print("Load validation entities and relations...")
   entities_list = ntn_input.load_entities(params.data_path)
   relations_list = ntn_input.load_relations(params.data_path)
   # python list of (e1, R, e2) for entire training set in index form
-  indexed_validation_data = data_to_indexed_validation(validation_data, entities_list, relations_list)
-
+  indexed_validation_data = data_to_indexed_validation(raw_validation_data, entities_list, relations_list)
+  indexed_validation_data_eval = data_to_indexed_validation_eval(raw_validation_data, entities_list, relations_list)
   batch_size_validation = len(indexed_validation_data)
-  # indexed_eval_data = data_to_indexed_eval(raw_training_data, entities_list, relations_list)
 
   print("Load embeddings...")
-  (init_word_embeds, entity_to_wordvec) = ntn_input.load_init_embeds(params.data_path)
+  print()
+  init_word_embeds, entity_to_wordvec = ntn_input.load_init_embeds(params.data_path)
 
   num_entities = len(entities_list)
   num_relations = len(relations_list)
 
   num_iters = num_epochs
   batch_size = batch_size
-  # corrupt_size = params.corrupt_size
-  # slice_size = params.slice_size
   corrupt_size = corrupt_size
   slice_size = slice_size
 
@@ -143,21 +168,15 @@ def run_training(
     print("Starting to build graph " + str(datetime.datetime.now()))
     batch_placeholders = [tf.placeholder(tf.int32, shape=(None, 3), name='batch_' + str(i)) for i in range(num_relations)]
     label_placeholders = [tf.placeholder(tf.float32, shape=(None, 1), name='label_' + str(i)) for i in range(num_relations)]
-
     corrupt_placeholder = tf.placeholder(tf.bool, shape=(1))  # Which of e1 or e2 to corrupt?
+
     inference_train, inference_eval = ntn.inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_to_wordvec,
                                                     num_entities, num_relations, slice_size, batch_size, False, label_placeholders)
-    # loss = ntn.loss(inference_train, params.regularization)
-    # training = ntn.training(loss, params.learning_rate)
-
     loss = ntn.loss(inference_train, l2_lambda)
     training = ntn.training(loss, lr, mom_coeff)
-
-    # inference_eval = ntn.inference(batch_placeholders, corrupt_placeholder, init_word_embeds, entity_to_wordvec,
-    #                                num_entities, num_relations, slice_size, batch_size, True, label_placeholders)
-
     eval_correct = ntn.eval(inference_eval)
 
+    loss_validation = ntn.loss(inference_train, l2_lambda)
     validation_correct = ntn.eval(inference_eval)
 
     # Create a session for running Ops on the Graph.
@@ -176,6 +195,7 @@ def run_training(
     val_accs = list()
 
     for i in range(1, num_epochs + 1):
+      print()
       print("Starting iter " + str(i) + " " + str(datetime.datetime.now()))
       data_batch, random_indices = get_batch(batch_size, indexed_training_data, num_entities, corrupt_size)
       relation_batches = split_batch(data_batch, num_relations)
@@ -191,7 +211,6 @@ def run_training(
       accuracy_training = do_eval(sess, eval_correct, batch_placeholders, label_placeholders, corrupt_placeholder, eval_batches, eval_labels, batch_size)
       print('training cost:', cost_training)
       print('training accuracy:', accuracy_training)
-      print()
 
       train_costs.append((i, cost_training))
       train_accs.append((i, accuracy_training))
@@ -199,39 +218,35 @@ def run_training(
       cost_validation = None
       accuracy_validation = None
 
-      # TODO: Eval against dev set?
       if i % val_per_iter == 0 or i == 1:
         print("Beginning building validation")
-        # data_batch = get_batch_val(batch_size, indexed_training_data, num_entities, corrupt_size)
-        # # relation, e1s, e2s, e_corrupts, targets
-        # relation_batches = split_batch(data_batch, num_relations)
-        # feed_dict = fill_feed_dict(relation_batches, params.train_both, batch_placeholders, label_placeholders, corrupt_placeholder, num_relations)
+        data_batch_validation, _ = get_batch_validation(batch_size, indexed_validation_data, num_entities, corrupt_size)
+        relation_batches_validation = split_batch_validation(data_batch_validation, num_relations)
+        batches_validation, labels_validation = data_to_relation_sets(indexed_validation_data_eval, num_relations)
 
-        batches_validation, labels_validation = data_to_relation_sets(indexed_validation_data, num_relations)
-
-        # cost_val, acc_val = sess.run([loss_validation, accuracy_validation], feed_dict=feed_dict)
-        loss_validation = ntn.loss(inference_train, params.regularization)
-        feed_dict = fill_feed_dict_train(batches_validation, params.train_both, batch_placeholders, label_placeholders, corrupt_placeholder)
+        feed_dict = fill_feed_dict_train(relation_batches_validation, params.train_both, batch_placeholders, label_placeholders, corrupt_placeholder)
         cost_validation = sess.run([loss_validation], feed_dict=feed_dict)
+
         accuracy_validation = do_eval(sess, validation_correct, batch_placeholders, label_placeholders, corrupt_placeholder, batches_validation, labels_validation, batch_size)
         print('validation cost:', cost_validation)
         print('validation accuracy:', accuracy_validation)
-        print()
 
         val_costs.append((i, cost_validation))
         val_accs.append((i, accuracy_validation))
 
         # early stopping
-        if accuracy_validation <= prev_accuracy_validation and i > 100 and stop_early:
+        if accuracy_validation <= prev_accuracy_validation and stop_early:
           print("Validation accuracy stopped improving, stopping training early after %d epochs!" % i)
           print()
           break
 
         prev_accuracy_validation = accuracy_validation
 
+    print()
     print("check pointing model...")
     saver.save(sess, params.output_path + "/" + params.data_name + str(i) + '.sess')
     print("model checkpoint complete!")
+    print()
 
   return train_costs, train_accs, val_costs, val_accs
 
@@ -242,8 +257,9 @@ def do_eval(sess, eval_correct, batch_placeholders, label_placeholders, corrupt_
 
   feed_dict = fill_feed_dict_eval(eval_batches, eval_labels, params.train_both,
                                   batch_placeholders, label_placeholders, corrupt_placeholder)
-  # predictions,labels = sess.run(eval_correct, feed_dict)
   predictions, labels = sess.run(eval_correct, feed_dict)
+  print('predictions:', predictions)
+  print('labels:', labels)
 
   for i in range(len(predictions[0])):
     if predictions[0][i] > 0 and labels[0][i] == 1:

@@ -1,6 +1,7 @@
 import pickle
-import numpy as np
+from datetime import datetime
 
+import numpy as np
 import tensorflow as tf
 
 import ntn_input
@@ -37,19 +38,19 @@ def sample_model_architecture_and_hyperparams(max_depth=10,
 
   # Build base model definitions:
   model_params = {
-      'slice_size': 2}
+      'slice_size': slice_size}
 
   # Specify the training hyperparameters:
   training_params = {
       'batch_size': 10000,
-      'corrupt_size': 1,
-      'lr': 0.095816854173317881,
-      'l2_lambda': 0.045865217294355581,
-      'mom_coeff': 0.51650816560051749,
+      'corrupt_size': corrupt_size,
+      'lr': lr,
+      'l2_lambda': l2_lambda,
+      'mom_coeff': mom_coeff,
       'optimizer_fn': tf.train.AdamOptimizer(learning_rate=lr),
       'val_per_iter': 10,
       'stop_early': True,
-      'num_epochs': 500}
+      'num_epochs': 100}
 
   return model_params, training_params
 
@@ -81,7 +82,7 @@ def build_optimal_model():
     ret = {'cost_training': train_losses, 'accuracy_training': train_accs,
            'cost_validation': val_losses, 'accuracy_validation': val_accs}
 
-    with open('results_train_val.pkl', 'wb') as fhand:
+    with open('results_train_val_{}.pkl'.format(datetime.now()), 'wb') as fhand:
       pickle.dump(ret, fhand)
 
     results.append((val_accs[-1], model_params, training_params))
@@ -91,7 +92,7 @@ def build_optimal_model():
   results.sort(key=lambda x: x[0], reverse=True)
 
   # Save results
-  with open('results_plot.txt', 'w') as fhand:
+  with open('results_plot_{}.txt'.format(datetime.now()), 'w') as fhand:
     for r in results:
       print(r)
       fhand.write(str(r) + '\n')
@@ -142,7 +143,8 @@ def test_model():
 
 def main():
   build_optimal_model()
-  test_model()
+  # test_model()
+  print()
   print('Done!')
 
 
