@@ -69,7 +69,7 @@ def build_optimal_model():
 
     # Sample the model and hyperparams we are using.
     model_params, training_params = sample_model_architecture_and_hyperparams()
-
+    print()
     print("RUN: %d out of %d:" % (i + 1, NUM_EXPERIMENTS))
     print("Sampled Architecture: \n", model_params)
     print("Hyper-parameters:\n", training_params)

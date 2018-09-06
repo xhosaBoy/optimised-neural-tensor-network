@@ -11814,3 +11814,10 @@ francis_parker_yockey	profession	philosopher	1
 francis_parker_yockey	profession	vaudeville	-1
 arthur_wellesley_1st_duke_of_wellington	gender	male	1
 arthur_wellesley_1st_duke_of_wellington	gender	female	-1
+israel_nathan_herstein	place_of_death	chicago	1
+adele_jergens	place_of_birth	brooklyn	1
+anthony_asquith	location	london	1
+anna_e_roosevelt	parents	eleanor_roosevelt	1
+yongzheng_emperor	children	qianlong_emperor	1
+marjorie_merriweather_post	spouse	joseph_e_davies	1
+

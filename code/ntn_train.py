@@ -87,6 +87,7 @@ def split_batch_validation(data_batch, num_relations):
 
 def fill_feed_dict_train(batches, train_both, batch_placeholders, label_placeholders, corrupt_placeholder):
   # print('fill_feed_dict_train batches:', batches)
+  # print('batch list length:', len(batches))
   feed_dict = {corrupt_placeholder: [train_both and np.random.random() > 0.5]}
   for i in range(len(batch_placeholders)):
     feed_dict[batch_placeholders[i]] = batches[i]
