@@ -46,14 +46,6 @@ def data_to_indexed_validation(data, entities, relations):
   return indexed_data
 
 
-def data_to_indexed_validation(data, entities, relations):
-  entity_to_index = {entities[i]: i for i in range(len(entities))}
-  relation_to_index = {relations[i]: i for i in range(len(relations))}
-  indexed_data = [(entity_to_index[data[i][0]], relation_to_index[data[i][1]],
-                   entity_to_index[data[i][2]], 1.0) for i in range(len(data))]
-  return indexed_data
-
-
 def get_batch(batch_size, data, num_entities, corrupt_size):
   random_indices = random.sample(range(len(data)), batch_size)
   # random_indices = list(range(len(data)))
@@ -66,9 +58,11 @@ def get_batch(batch_size, data, num_entities, corrupt_size):
 
 def get_batch_validation(batch_size, data, num_entities, corrupt_size):
   random_indices = list(range(len(data)))
+  # print('validation random indices:', random_indices)
   random.shuffle(random_indices)
   batch = [(data[i][0], data[i][1], data[i][2], random.randint(0, num_entities - 1))
            for i in random_indices]
+  # print('validation batch:', batch)
   return batch, random_indices
 
 
@@ -92,6 +86,7 @@ def split_batch_validation(data_batch, num_relations):
 
 
 def fill_feed_dict_train(batches, train_both, batch_placeholders, label_placeholders, corrupt_placeholder):
+  # print('fill_feed_dict_train batches:', batches)
   feed_dict = {corrupt_placeholder: [train_both and np.random.random() > 0.5]}
   for i in range(len(batch_placeholders)):
     feed_dict[batch_placeholders[i]] = batches[i]
@@ -219,9 +214,12 @@ def run_training(
       accuracy_validation = None
 
       if i % val_per_iter == 0 or i == 1:
-        print("Beginning building validation")
+        print()
+        print("################### Beginning building validation ###################")
         data_batch_validation, _ = get_batch_validation(batch_size, indexed_validation_data, num_entities, corrupt_size)
+        # print('data_batch_validation:', data_batch_validation)
         relation_batches_validation = split_batch_validation(data_batch_validation, num_relations)
+        # print('relation_batches_validation:', relation_batches_validation)
         batches_validation, labels_validation = data_to_relation_sets(indexed_validation_data_eval, num_relations)
 
         feed_dict = fill_feed_dict_train(relation_batches_validation, params.train_both, batch_placeholders, label_placeholders, corrupt_placeholder)
@@ -230,23 +228,25 @@ def run_training(
         accuracy_validation = do_eval(sess, validation_correct, batch_placeholders, label_placeholders, corrupt_placeholder, batches_validation, labels_validation, batch_size)
         print('validation cost:', cost_validation)
         print('validation accuracy:', accuracy_validation)
+        print("################### End building validation ###################")
 
         val_costs.append((i, cost_validation))
         val_accs.append((i, accuracy_validation))
 
         # early stopping
         if accuracy_validation <= prev_accuracy_validation and stop_early:
+          print()
           print("Validation accuracy stopped improving, stopping training early after %d epochs!" % i)
           print()
           break
 
         prev_accuracy_validation = accuracy_validation
 
-    print()
-    print("check pointing model...")
-    saver.save(sess, params.output_path + "/" + params.data_name + str(i) + '.sess')
-    print("model checkpoint complete!")
-    print()
+    # print()
+    # print("check pointing model...")
+    # saver.save(sess, params.output_path + "/" + params.data_name + str(i) + '.sess')
+    # print("model checkpoint complete!")
+    # print()
 
   return train_costs, train_accs, val_costs, val_accs
 
@@ -258,8 +258,8 @@ def do_eval(sess, eval_correct, batch_placeholders, label_placeholders, corrupt_
   feed_dict = fill_feed_dict_eval(eval_batches, eval_labels, params.train_both,
                                   batch_placeholders, label_placeholders, corrupt_placeholder)
   predictions, labels = sess.run(eval_correct, feed_dict)
-  print('predictions:', predictions)
-  print('labels:', labels)
+  # print('predictions:', predictions)
+  # print('labels:', labels)
 
   for i in range(len(predictions[0])):
     if predictions[0][i] > 0 and labels[0][i] == 1:

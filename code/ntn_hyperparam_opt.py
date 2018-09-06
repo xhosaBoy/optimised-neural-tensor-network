@@ -82,24 +82,25 @@ def build_optimal_model():
     ret = {'cost_training': train_losses, 'accuracy_training': train_accs,
            'cost_validation': val_losses, 'accuracy_validation': val_accs}
 
-    with open('results_train_val_{}.pkl'.format(datetime.now()), 'wb') as fhand:
+    with open(params.output_path + '/results_train_val_{}.pkl'.format(i), 'wb') as fhand:
       pickle.dump(ret, fhand)
 
     results.append((val_accs[-1], model_params, training_params))
 
-    plot_multi([train_losses, val_losses], ['train', 'val'], 'loss', 'epoch', [train_accs, val_accs], ['train', 'val'], 'accuracy', 'epoch')
+    # plot_multi([train_losses, val_losses], ['train', 'val'], 'loss', 'epoch', [train_accs, val_accs], ['train', 'val'], 'accuracy', 'epoch')
 
-  results.sort(key=lambda x: x[0], reverse=True)
+  results.sort(key=lambda x: x[0][1], reverse=True)
 
   # Save results
-  with open('results_plot_{}.txt'.format(datetime.now()), 'w') as fhand:
+  with open(params.output_path + '/results_plot_{}.txt'.format(datetime.now()), 'w') as fhand:
+    print()
     for r in results:
       print(r)
       fhand.write(str(r) + '\n')
 
 
 def test_model():
-  print("Beginning building testing")
+  print("################### Beginning building testing ###################")
   print(params.output_path)
   checkpoint = tf.train.latest_checkpoint(params.output_path, 'checkpoint')
   print(checkpoint)
