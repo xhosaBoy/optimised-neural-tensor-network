@@ -1,0 +1,1 @@
+((100, 0.7351475661172863), {'slice_size': 7}, {'batch_size': 10000, 'corrupt_size': 10, 'lr': 0.0095900684772267254, 'l2_lambda': 0.18593397005522661, 'mom_coeff': 0.68332924568181874, 'optimizer_fn': <tensorflow.python.training.adam.AdamOptimizer object at 0x10cf33128>, 'val_per_iter': 10, 'stop_early': True, 'num_epochs': 100})

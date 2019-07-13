@@ -1,13 +1,18 @@
+import os
 import math
 
 data_number = 0  # 0 - Wordnet, 1 - Freebase
-if data_number == 0:
-  data_name = 'Wordnet'
-else:
-  data_name = 'Freebase'
 
-data_path = '../data/' + data_name
-output_path = '../output/' + data_name + '/'
+if data_number == 0:
+    data_name = 'Wordnet'
+else:
+    data_name = 'Freebase'
+
+file = os.path.realpath(__file__)
+project = os.path.split(os.path.dirname(file))[0]
+
+data_path = os.path.join(project, 'data', data_name)
+output_path = os.path.join(project, 'output', data_name)
 
 num_iter = 500
 train_both = False
