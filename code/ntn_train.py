@@ -197,12 +197,14 @@ def run_training(
         num_epochs=100):
 
     logger.info("Begin!")
+
+    logger.info("Load entities and relations...")
     entities_list = ntn_input.load_entities(params.data_path)
     relations_list = ntn_input.load_relations(params.data_path)
 
     logger.info("Load training data...")
     raw_training_data = ntn_input.load_training_data(params.data_path)
-    logger.info("Load entities and relations...")
+    np.random.shuffle(raw_training_data)
 
     # python list of (e1, R, e2) for entire training set in index form
     indexed_training_data = data_to_indexed_train(raw_training_data, entities_list, relations_list)
@@ -273,11 +275,12 @@ def run_training(
         test_costs = list()
         test_accs = list()
 
+        prev_accuracy_validation = 0
+
         for i in range(1, num_epochs + 1):
 
             logger.info("Starting EPOCH " + str(i))
 
-            prev_accuracy_validation = 0
             iteration = 0
 
             for j in range(0, len(indexed_training_data), batch_size):
@@ -338,7 +341,7 @@ def run_training(
                                            i)
 
             # early stopping
-            if accuracy_validation <= prev_accuracy_validation and stop_early:
+            if accuracy_validation <= prev_accuracy_validation and i > 10 and stop_early:
                 logger.info(
                     "Validation accuracy stopped improving, stopping training early after %d epochs!" % i)
                 break
