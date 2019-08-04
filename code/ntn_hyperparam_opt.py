@@ -44,7 +44,7 @@ def sample_model_architecture_and_hyperparams(max_depth=10,
 
     # Specify the training hyperparameters:
     training_params = {
-        'batch_size': 10000,
+        'batch_size': 250,
         'corrupt_size': 1,
         'lr': 0.095816854173317881,
         'l2_lambda': 0.045865217294355581,
@@ -52,7 +52,7 @@ def sample_model_architecture_and_hyperparams(max_depth=10,
         'optimizer_fn': tf.train.AdamOptimizer(learning_rate=lr),
         'val_per_iter': 10,
         'stop_early': True,
-        'num_epochs': 500}
+        'num_epochs': 100}
 
     return model_params, training_params
 
@@ -111,7 +111,7 @@ def test_model():
     print("Load entities and relations...")
     entities_list = ntn_input.load_entities(params.data_path)
     relations_list = ntn_input.load_relations(params.data_path)
-    print("Load validation data...")
+    print("Load test data...")
     test_data = ntn_input.load_test_data(params.data_path)
     test_data = data_to_indexed(test_data, entities_list, relations_list)
 

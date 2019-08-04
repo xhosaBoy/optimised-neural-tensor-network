@@ -463,8 +463,8 @@ def test(indexed_test_data,
 
 
 def main(argv):
-    run_training(num_epochs=100,
-                 batch_size=250)
+    run_training(num_epochs=10,
+                 batch_size=1000)
 
 
 if __name__ == "__main__":

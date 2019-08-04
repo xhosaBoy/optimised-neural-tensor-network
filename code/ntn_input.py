@@ -1,6 +1,5 @@
 # Load entity, relation data, precomputed entity vectors based on specified database
 # Currently supports FreeBase and Wordnet data
-# Author: Dustin Doss
 
 import params
 import scipy.io as sio
