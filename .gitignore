@@ -1,2 +1,3 @@
-# ignore all compiled code
-*.pyc
+.idea
+.ipynb_checkpoints
+__pycache__

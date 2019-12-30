@@ -85,21 +85,14 @@ def insert_records(records, tablename, connection):
 
 
 def parse_entity(entity):
-    pattern = re.compile(r'^__([0-9]*\b)')
-    matches = pattern.search(entity)
+    pattern = re.compile(r'([a-zA-Z0-9_-]*)')
+    matches = pattern.findall(entity)
     logger.debug(f'matches: {matches}')
 
-    if matches:
-        entity_name, entity_sense_index = matches.group(1), ''
-    else:
-        pattern = re.compile(r'^__([a-zA-Z0-9\'\._/-]*)(_[0-9]*)')
-        matches, = pattern.findall(entity)
-        logger.debug(f'matches: {matches}')
-        entity_name, entity_sense_index = matches
+    entity_name, _ = matches
+    logger.debug(f'entity_name: {entity_name}')
 
-    logger.debug(f'entity_name: {entity_name}, entity_sense_index: {entity_sense_index}')
-
-    return entity_name, entity_sense_index
+    return entity_name
 
 
 def parse_record(filename, line):
@@ -115,23 +108,20 @@ def parse_record(filename, line):
     logger.debug(f'predicate: {predicate}')
 
     logger.debug(f'Parsing subject...')
-    subject, subject_sense_index = parse_entity(subject)
+    subject = parse_entity(subject)
     logger.debug(f'Parsing subject complete!')
     logger.debug(f'Parsing object...')
-    obj, object_sense_index = parse_entity(obj)
+    obj = parse_entity(obj)
     logger.debug(f'Parsing object complete!')
 
-    logger.debug(f'obj: {obj}, object_sense_index: {object_sense_index}')
+    logger.debug(f'obj: {obj}')
 
     record['subject'] = subject
-    record['subject_sense_index'] = int(subject_sense_index.replace('_', '')) if subject_sense_index else None
     record['predicate'] = predicate
     record['object'] = obj
-    record['object_sense_index'] = int(object_sense_index.replace('_', '')) if object_sense_index else None
     logger.debug(f'record: {record}')
 
     return record
-
 
 
 def get_records(tripletfile):
@@ -155,13 +145,15 @@ def get_records(tripletfile):
 
 
 def main():
+    logger.info('Connecting to database...')
     connection = get_connection('scientist',
                                 '*********',
                                 '127.0.0.1',
                                 '5432',
-                                'tensor_factorisation_wordnet')
+                                'tensor_factorisation_freebase')
+    logger.info('Connecting to database successful!')
 
-    tripletfile = get_path('data/Wordnet')
+    tripletfile = get_path('data/Freebase')
     logger.debug(f'tripletfile: {tripletfile}')
 
     dirname, = list(os.walk(tripletfile))
@@ -176,7 +168,7 @@ def main():
                 tablename, _ = filename.split('.')
 
             logger.debug(f'tablename: {tablename}')
-            filename = get_path('data/Wordnet', filename)
+            filename = get_path('data/Freebase', filename)
             logger.debug(f'filename: {filename}')
 
             logger.info(f'Getting {tablename} records...')
