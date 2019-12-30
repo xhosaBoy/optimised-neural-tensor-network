@@ -88,7 +88,7 @@ def parse_entity(entity):
     pattern = re.compile(r'([a-zA-Z0-9_-]*)')
     matches = pattern.findall(entity)
     logger.debug(f'matches: {matches}')
-    
+
     entity_name, _ = matches
     logger.debug(f'entity_name: {entity_name}')
 
