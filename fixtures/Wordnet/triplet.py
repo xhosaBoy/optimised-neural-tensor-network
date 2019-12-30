@@ -97,7 +97,7 @@ def parse_entity(entity):
         logger.debug(f'matches: {matches}')
         entity_name, entity_sense_index = matches
 
-    logger.debug(f'entity_name: {entity_name}, subject_sense_index: {entity_sense_index}')
+    logger.debug(f'entity_name: {entity_name}, entity_sense_index: {entity_sense_index}')
 
     return entity_name, entity_sense_index
 

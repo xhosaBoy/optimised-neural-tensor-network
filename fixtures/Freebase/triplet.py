@@ -1,6 +1,7 @@
 # std
 import os
 import sys
+import re
 import logging
 
 # 3rd party
@@ -83,27 +84,62 @@ def insert_records(records, tablename, connection):
             insert_record(record, tablename, cursor, con)
 
 
+def parse_entity(entity):
+    pattern = re.compile(r'([a-zA-Z0-9_-]*)')
+    matches = pattern.findall(entity)
+    logger.debug(f'matches: {matches}')
+    
+    entity_name, _ = matches
+    logger.debug(f'entity_name: {entity_name}')
+
+    return entity_name
+
+
+def parse_record(filename, line):
+    record = {}
+
+    if filename == 'train.txt':
+        subject, predicate, obj = line.strip().split('\t')
+    else:
+        subject, predicate, obj, _ = line.strip().split('\t')
+    logger.debug(f'subject: {subject}, predicate: {predicate}, object: {obj}')
+
+    predicate = predicate.replace('_', ' ').strip()
+    logger.debug(f'predicate: {predicate}')
+
+    logger.debug(f'Parsing subject...')
+    subject = parse_entity(subject)
+    logger.debug(f'Parsing subject complete!')
+    logger.debug(f'Parsing object...')
+    obj = parse_entity(obj)
+    logger.debug(f'Parsing object complete!')
+
+    logger.debug(f'obj: {obj}')
+
+    record['subject'] = subject
+    record['predicate'] = predicate
+    record['object'] = obj
+    logger.debug(f'record: {record}')
+
+    return record
+
+
 def get_records(tripletfile):
 
     with open(tripletfile, 'r') as factfile:
         records = []
 
         for line in factfile:
-            record = {}
-            subject, predicate, obj = line.strip().split('\t')
-            logger.debug(f'subject: {subject}, predicate: {predicate}, object: {obj}')
+            logger.debug(f'line: {line.strip()}')
+            _, filename = os.path.split(tripletfile)
+            logger.debug(f'filename: {filename}')
 
-            predicate = predicate.replace('_', ' ').strip()
-            logger.debug(f'predicate: {predicate}')
-
-            record['subject'] = subject
-            record['predicate'] = predicate
-            record['object'] = obj
-
-            logger.debug(f'record: {record}')
+            logger.debug(f'Parsing record...')
+            record = parse_record(filename, line)
+            logger.debug(f'Parsing complete!')
             records.append(record)
 
-        logger.info(f'number of records: {len(records)}')
+        logger.info(f"number of {filename} records: {len(records)}")
 
     return records
 
@@ -114,26 +150,31 @@ def main():
                                 '*********',
                                 '127.0.0.1',
                                 '5432',
-                                'tensor_factorisation_fb15k')
-    logger.info('Successfully conntect to database!')
+                                'tensor_factorisation_freebase')
+    logger.info('Connecting to database successful!')
 
     tripletfile = get_path('data/Freebase')
     logger.debug(f'tripletfile: {tripletfile}')
 
     dirname, = list(os.walk(tripletfile))
     _, _, filenames = dirname
-    experiment = ['train.txt', 'valid.txt', 'test.txt']
+    experiment = ['train.txt', 'dev.txt', 'test.txt']
 
     for filename in filenames:
         if filename in experiment:
-            tablename, _ = filename.split('.')
+            if filename == 'dev.txt':
+                tablename = 'valid'
+            else:
+                tablename, _ = filename.split('.')
+
             logger.debug(f'tablename: {tablename}')
             filename = get_path('data/Freebase', filename)
+            logger.debug(f'filename: {filename}')
 
-            logger.info('Getting records...')
+            logger.info(f'Getting {tablename} records...')
             records = get_records(filename)
-            logger.debug(f'training records: {records}')
-            logger.debug(f'number of training records: {len(records)}')
+            logger.debug(f'records: {records}')
+            logger.debug(f'number of records: {len(records)}')
             logger.info('Completed getting records!')
 
             logger.info('Inserting records...')
