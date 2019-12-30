@@ -84,16 +84,19 @@ def insert_records(records, tablename, connection):
 
 def get_records(relationfile):
 
-    with open(relationfile, 'r') as relationfile:
+    with open(relationfile, 'r') as entityfile:
         records = []
 
-        for line in relationfile:
+        for line in entityfile:
             record = {}
-            _, relation, _ = line.strip().split('\t')
+            relation = line.strip()
             logger.debug(f'relation: {relation}')
 
-            record['name'] = relation
+            name = relation
+            logger.debug(f'name: {name}')
+            record['name'] = name
             logger.debug(f'record: {record}')
+
             records.append(record)
 
         logger.info(f'number of records: {len(records)}')
@@ -102,45 +105,25 @@ def get_records(relationfile):
 
 
 def main():
-    logger.info('Connecting to database...')
     connection = get_connection('scientist',
                                 '*********',
                                 '127.0.0.1',
                                 '5432',
-                                'tensor_factorisation_fb15k')
-    logger.info('Successfully conntect to database!')
+                                'tensor_factorisation_freebase')
 
     tablename = 'relation'
-    relationfile = get_path('data/Freebase')
+    relationfile = get_path('data/Freebase', 'relations.txt')
     logger.debug(f'relationfile: {relationfile}')
 
     logger.info('Getting records...')
-    dirname, = list(os.walk(relationfile))
-    _, _, filenames = dirname
-    experiment = ['train.txt', 'valid.txt', 'test.txt']
-
-    records = []
-
-    for filename in filenames:
-        if filename in experiment:
-            filename = get_path('data/Freebase', filename)
-            logger.debug(f'filename: {filename}')
-
-            logger.info('Extending records...')
-            records_new = [{'name': value} for value in set([relation['name'] for relation in get_records(filename)])]
-            logger.debug(f'records_train: {records_new}')
-            logger.debug(f'number of relations so far: {len(records_new)}')
-            records.extend(records_new)
-            logger.info('Completed extending records!')
-
+    records = get_records(relationfile)
+    logger.debug(f'records: {records}')
+    logger.debug(f'number of relations: {len(records)}')
     logger.info('Successfully got records!')
-
-    records = [{'name': value} for value in set([relation['name'] for relation in records])]
-    logger.info(f'final number of relations: {len(records)}')
 
     logger.info('Inserting records...')
     insert_records(records, tablename, connection)
-    logger.info('Completed getting records!')
+    logger.info('Completed inserting records!')
 
 
 if __name__ == '__main__':

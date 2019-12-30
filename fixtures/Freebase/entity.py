@@ -83,9 +83,10 @@ def insert_records(entityfile, tablename, connection):
 
             for index, line in enumerate(entityfile):
                 record = {}
+                entity = line.strip()
+                logger.debug(f'entity: {entity}')
 
-                name = line.strip()
-                logger.debug(f'name: {name}')
+                name = entity
                 record['name'] = name
                 logger.debug(f'record: {record}')
 
