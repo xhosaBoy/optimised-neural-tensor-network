@@ -4,3 +4,4 @@ six==1.10.0
 tensorflow==0.12.1
 wheel==0.26.0
 psycopg2
+nbdime
