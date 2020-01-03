@@ -301,7 +301,7 @@ def run_training(
                                                             i)
 
             logger.info(f'epoch: {i}, cost_validation: {cost_validation}')
-            logger.info(f'epoch: {i}, accuracy_validation: {accuracy_training}')
+            logger.info(f'epoch: {i}, accuracy_validation: {accuracy_validation}')
 
             cost_test, accuracy_test = test(indexed_test_data,
                                             num_relations,
