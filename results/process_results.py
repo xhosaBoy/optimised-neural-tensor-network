@@ -49,21 +49,33 @@ def parse_results(path):
     return results
 
 
-def write_results(path, results):
-    with open('rntn_train_validate_and_test_wordnet_experiment.csv', mode='w') as resultsfile:
+def write_results(results_baseline, results_experiment):
+    with open('rntn_train_validate_and_test_wordnet_cost.csv', mode='w') as resultsfile:
         csv_writer = csv.writer(resultsfile)
-        csv_writer.writerow(['cost_training', 'cost_validation', 'cost_test'])
-        for epoch in results:
-            csv_writer.writerow(results[epoch])
+        csv_writer.writerow(['cost_training_baseline',
+                             'cost_validation_baseline',
+                             'cost_test_baseline',
+                             'cost_training_experiment',
+                             'cost_validation_experiment',
+                             'cost_test_experiment'])
+        for epoch in results_baseline:
+            results = results_baseline[epoch]
+            results.extend(results_experiment[epoch])
+            logger.debug(f'results: {results}')
+            csv_writer.writerow(results)
 
 
 def main():
-    path = get_path('rntn_train_validate_and_test_wordnet_experiment.log', 'results')
+    path_baseline = get_path('rntn_train_validate_and_test_wordnet_baseline.log', 'results')
+    path_experiment = get_path('rntn_train_validate_and_test_wordnet_experiment.log', 'results')
     logger.info('Parsing results...')
-    results = parse_results(path)
+    results_baseline = parse_results(path_baseline)
+    logger.info('Parsing results complete!')
+    logger.info('Parsing results...')
+    results_experiment = parse_results(path_experiment)
     logger.info('Parsing results complete!')
     logger.info('Writing results...')
-    write_results(path, results)
+    write_results(results_baseline, results_experiment)
     logger.info('Writing results complete!')
 
 
