@@ -14,7 +14,7 @@ project = os.path.split(os.path.dirname(file))[0]
 data_path = os.path.join(project, 'data', data_name)
 output_path = os.path.join(project, 'output', data_name)
 
-num_iter = 500
+num_iter = 100
 train_both = False
 batch_size = 10000
 corrupt_size = 10  # how many negative examples are given for each positive example?
