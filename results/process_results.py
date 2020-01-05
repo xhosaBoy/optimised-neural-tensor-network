@@ -11,7 +11,7 @@ logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:%(message)s')
 
 stream_handler = logging.StreamHandler(sys.stdout)
-stream_handler.setLevel(logging.DEBUG)
+stream_handler.setLevel(logging.INFO)
 stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 
@@ -28,8 +28,9 @@ def get_path(filename, dirname=None):
 
 def parse_results(path):
     with open(path, 'r') as resultsfile:
-        pattern = re.compile(r'(epoch: [0-9]+), (cost_[a-z]+: [0-9]+\.?[0-9]*)')
-        results = defaultdict(list)
+        pattern = re.compile(r'(epoch: [0-9]+), (([a-z]+)_[a-z]+: [0-9]+\.?[0-9]*)')
+        results_cost = defaultdict(list)
+        results_accuracy = defaultdict(list)
 
         for line in resultsfile:
             line = line.strip()
@@ -39,17 +40,29 @@ def parse_results(path):
 
             if record:
                 record, = record
+                metric = record[2]
+                logger.debug(f'metric: {metric}')
                 value = float(record[1].split(':')[1].strip())
                 logger.debug(f'value: {value}')
-                results[record[0]].append(value)
-                logger.debug(f'result: {results}')
 
-    logger.debug(f'results: {results}')
+                if metric == 'cost':
+                    results_cost[record[0]].append(value)
+                    logger.debug(f'results_cost: {results_cost}')
+                elif metric == 'accuracy':
+                    results_accuracy[record[0]].append(value)
+                    logger.debug(f'results_accuracy: {results_accuracy}')
 
-    return results
+    logger.info(f'results_cost: {results_cost}')
+    logger.info(f'results_accuracy: {results_accuracy}')
+
+    return results_cost, results_accuracy
 
 
-def write_results(results_baseline, results_experiment):
+def write_results(results_cost_baseline,
+                  results_accuracy_baseline,
+                  results_cost_experiment,
+                  results_accuracy_experiment):
+
     with open('rntn_train_validate_and_test_wordnet_cost.csv', mode='w') as resultsfile:
         csv_writer = csv.writer(resultsfile)
         csv_writer.writerow(['cost_training_baseline',
@@ -58,24 +71,44 @@ def write_results(results_baseline, results_experiment):
                              'cost_training_experiment',
                              'cost_validation_experiment',
                              'cost_test_experiment'])
-        for epoch in results_baseline:
-            results = results_baseline[epoch]
-            results.extend(results_experiment[epoch])
-            logger.debug(f'results: {results}')
-            csv_writer.writerow(results)
+        for epoch in results_cost_baseline:
+            results_cost = results_cost_baseline[epoch]
+            results_cost.extend(results_cost_experiment[epoch])
+            logger.debug(f'results_cost: {results_cost}')
+            csv_writer.writerow(results_cost)
+
+    with open('rntn_train_validate_and_test_wordnet_accuracy.csv', mode='w') as resultsfile:
+        csv_writer = csv.writer(resultsfile)
+        csv_writer.writerow(['accuracy_training_baseline',
+                             'accuracy_validation_baseline',
+                             'accuracy_test_baseline',
+                             'accuracy_training_experiment',
+                             'accuracy_validation_experiment',
+                             'accuracy_test_experiment'])
+        for epoch in results_accuracy_baseline:
+            results_accuracy = results_accuracy_baseline[epoch]
+            results_accuracy.extend(results_accuracy_experiment[epoch])
+            logger.debug(f'results_accuracy: {results_accuracy}')
+            csv_writer.writerow(results_accuracy)
 
 
 def main():
     path_baseline = get_path('rntn_train_validate_and_test_wordnet_baseline.log', 'results')
     path_experiment = get_path('rntn_train_validate_and_test_wordnet_experiment.log', 'results')
+
     logger.info('Parsing results...')
-    results_baseline = parse_results(path_baseline)
+    results_cost_baseline, results_accuracy_baseline = parse_results(path_baseline)
     logger.info('Parsing results complete!')
+
     logger.info('Parsing results...')
-    results_experiment = parse_results(path_experiment)
+    results_cost_experiment, results_accuracy_experiment = parse_results(path_experiment)
     logger.info('Parsing results complete!')
+
     logger.info('Writing results...')
-    write_results(results_baseline, results_experiment)
+    write_results(results_cost_baseline,
+                  results_accuracy_baseline,
+                  results_cost_experiment,
+                  results_accuracy_experiment)
     logger.info('Writing results complete!')
 
 
