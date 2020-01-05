@@ -1,0 +1,147 @@
+2020-01-04 11:47:35,501:__main__:INFO:Begin!
+2020-01-04 11:47:35,501:__main__:INFO:Load entities and relations...
+2020-01-04 11:47:35,507:__main__:INFO:Load training data...
+2020-01-04 11:47:36,529:__main__:INFO:Load validation data...
+2020-01-04 11:47:36,548:__main__:INFO:Load entities and relations...
+2020-01-04 11:47:36,570:__main__:INFO:Load test data...
+2020-01-04 11:47:36,650:__main__:INFO:Load entities and relations...
+2020-01-04 11:47:36,727:__main__:INFO:Load embeddings...
+2020-01-04 11:47:41,290:__main__:INFO:Starting to build graph...
+2020-01-04 12:01:56,337:__main__:INFO:Starting EPOCH 1
+2020-01-04 12:25:06,290:__main__:INFO:Starting TRAINING 1
+2020-01-04 12:37:07,129:__main__:INFO:Begin!
+2020-01-04 12:37:07,129:__main__:INFO:Load entities and relations...
+2020-01-04 12:37:07,136:__main__:INFO:Load training data...
+2020-01-04 12:37:08,359:__main__:INFO:Load validation data...
+2020-01-04 12:37:08,377:__main__:INFO:Load entities and relations...
+2020-01-04 12:37:08,399:__main__:INFO:Load test data...
+2020-01-04 12:37:08,480:__main__:INFO:Load entities and relations...
+2020-01-04 12:37:08,554:__main__:INFO:Load embeddings...
+2020-01-04 12:37:13,129:__main__:INFO:Starting to build graph...
+2020-01-04 12:52:00,272:__main__:INFO:Starting EPOCH 1
+2020-01-04 13:15:32,660:__main__:INFO:epoch: 1, cost_training: [208.1352]
+2020-01-04 13:15:32,670:__main__:INFO:epoch: 1, accuracy_training: 0.5903614457831325
+2020-01-04 13:15:32,672:__main__:INFO:Starting VALIDATION 1
+2020-01-04 13:17:48,421:__main__:INFO:epoch: 1, cost_validation: 4816.345703125
+2020-01-04 13:17:48,427:__main__:INFO:epoch: 1, accuracy_validation: 0.556151782292066
+2020-01-04 13:17:48,429:__main__:INFO:Starting TESTING 1
+2020-01-04 13:19:42,820:__main__:INFO:epoch: 1, cost_test: 19456.376953125
+2020-01-04 13:19:42,821:__main__:INFO:epoch: 1, accuracy_test: 0.5596073596358119
+2020-01-04 13:19:42,821:__main__:INFO:Starting EPOCH 2
+2020-01-04 13:53:20,361:__main__:INFO:Begin!
+2020-01-04 13:53:20,361:__main__:INFO:Load entities and relations...
+2020-01-04 13:53:20,368:__main__:INFO:Load training data...
+2020-01-04 13:53:21,384:__main__:INFO:Load validation data...
+2020-01-04 13:53:21,401:__main__:INFO:Load entities and relations...
+2020-01-04 13:53:21,422:__main__:INFO:Load test data...
+2020-01-04 13:53:21,502:__main__:INFO:Load entities and relations...
+2020-01-04 13:53:21,585:__main__:INFO:Load embeddings...
+2020-01-04 13:53:26,179:__main__:INFO:Starting to build graph...
+2020-01-04 14:07:35,395:__main__:INFO:Starting EPOCH 1
+2020-01-04 14:12:29,788:__main__:INFO:epoch: 1, cost_training: 2113.146728515625
+2020-01-04 14:12:29,794:__main__:INFO:epoch: 1, accuracy_training: 0.7578457962030221
+2020-01-04 14:12:29,796:__main__:INFO:Starting VALIDATION 1
+2020-01-04 14:14:30,223:__main__:INFO:epoch: 1, cost_validation: 4979.330078125
+2020-01-04 14:14:30,227:__main__:INFO:epoch: 1, accuracy_validation: 0.617094672288233
+2020-01-04 14:14:30,228:__main__:INFO:Starting TESTING 1
+2020-01-04 14:16:11,194:__main__:INFO:epoch: 1, cost_test: 20205.65625
+2020-01-04 14:16:11,196:__main__:INFO:epoch: 1, accuracy_test: 0.6223918816388467
+2020-01-04 14:16:11,196:__main__:INFO:Starting EPOCH 2
+2020-01-04 14:16:51,662:__main__:INFO:epoch: 2, cost_training: 1341.4373779296875
+2020-01-04 14:16:51,662:__main__:INFO:epoch: 2, accuracy_training: 0.8678806664083688
+2020-01-04 14:16:51,662:__main__:INFO:Starting VALIDATION 2
+2020-01-04 14:18:52,881:__main__:INFO:epoch: 2, cost_validation: 8379.2412109375
+2020-01-04 14:18:52,882:__main__:INFO:epoch: 2, accuracy_validation: 0.6581065542353393
+2020-01-04 14:18:52,882:__main__:INFO:Starting TESTING 2
+2020-01-04 14:20:38,102:__main__:INFO:epoch: 2, cost_test: 33910.52734375
+2020-01-04 14:20:38,103:__main__:INFO:epoch: 2, accuracy_test: 0.6541160849772383
+2020-01-04 14:20:38,104:__main__:INFO:Starting EPOCH 3
+2020-01-04 14:21:18,132:__main__:INFO:epoch: 3, cost_training: 995.2854614257812
+2020-01-04 14:21:18,132:__main__:INFO:epoch: 3, accuracy_training: 0.8977140643161565
+2020-01-04 14:21:18,132:__main__:INFO:Starting VALIDATION 3
+2020-01-04 14:23:19,693:__main__:INFO:epoch: 3, cost_validation: 7257.853515625
+2020-01-04 14:23:19,695:__main__:INFO:epoch: 3, accuracy_validation: 0.6584898428516673
+2020-01-04 14:23:19,695:__main__:INFO:Starting TESTING 3
+2020-01-04 14:25:08,036:__main__:INFO:epoch: 3, cost_test: 29306.86328125
+2020-01-04 14:25:08,038:__main__:INFO:epoch: 3, accuracy_test: 0.6620827010622155
+2020-01-04 14:25:08,038:__main__:INFO:Starting EPOCH 4
+2020-01-04 14:25:48,178:__main__:INFO:epoch: 4, cost_training: 944.2832641601562
+2020-01-04 14:25:48,178:__main__:INFO:epoch: 4, accuracy_training: 0.9112746997287873
+2020-01-04 14:25:48,178:__main__:INFO:Starting VALIDATION 4
+2020-01-04 14:27:41,431:__main__:INFO:epoch: 4, cost_validation: 5706.6552734375
+2020-01-04 14:27:41,432:__main__:INFO:epoch: 4, accuracy_validation: 0.6632809505557685
+2020-01-04 14:27:41,432:__main__:INFO:Starting TESTING 4
+2020-01-04 14:29:26,348:__main__:INFO:epoch: 4, cost_test: 22706.216796875
+2020-01-04 14:29:26,349:__main__:INFO:epoch: 4, accuracy_test: 0.6654495447647951
+2020-01-04 14:29:26,350:__main__:INFO:Starting EPOCH 5
+2020-01-04 14:30:06,156:__main__:INFO:epoch: 5, cost_training: 865.5633544921875
+2020-01-04 14:30:06,158:__main__:INFO:epoch: 5, accuracy_training: 0.9325842696629213
+2020-01-04 14:30:06,159:__main__:INFO:Starting VALIDATION 5
+2020-01-04 14:32:02,318:__main__:INFO:epoch: 5, cost_validation: 5906.7998046875
+2020-01-04 14:32:02,319:__main__:INFO:epoch: 5, accuracy_validation: 0.6673054810272135
+2020-01-04 14:32:02,319:__main__:INFO:Starting TESTING 5
+2020-01-04 14:33:57,127:__main__:INFO:epoch: 5, cost_test: 23574.556640625
+2020-01-04 14:33:57,129:__main__:INFO:epoch: 5, accuracy_test: 0.6670144157814871
+2020-01-04 14:33:57,129:__main__:INFO:Starting EPOCH 6
+2020-01-04 14:34:36,664:__main__:INFO:epoch: 6, cost_training: 823.2147216796875
+2020-01-04 14:34:36,664:__main__:INFO:epoch: 6, accuracy_training: 0.9325842696629213
+2020-01-04 14:34:36,664:__main__:INFO:Starting VALIDATION 6
+2020-01-04 14:36:37,557:__main__:INFO:epoch: 6, cost_validation: 5914.95654296875
+2020-01-04 14:36:37,566:__main__:INFO:epoch: 6, accuracy_validation: 0.6617477960904561
+2020-01-04 14:36:37,566:__main__:INFO:Starting TESTING 6
+2020-01-04 14:38:27,840:__main__:INFO:epoch: 6, cost_test: 24067.62109375
+2020-01-04 14:38:27,841:__main__:INFO:epoch: 6, accuracy_test: 0.6710451441578149
+2020-01-04 14:38:27,841:__main__:INFO:Starting EPOCH 7
+2020-01-04 14:39:13,704:__main__:INFO:epoch: 7, cost_training: 803.763427734375
+2020-01-04 14:39:13,706:__main__:INFO:epoch: 7, accuracy_training: 0.9430453312669508
+2020-01-04 14:39:13,706:__main__:INFO:Starting VALIDATION 7
+2020-01-04 14:41:32,420:__main__:INFO:epoch: 7, cost_validation: 5822.0869140625
+2020-01-04 14:41:32,421:__main__:INFO:epoch: 7, accuracy_validation: 0.6627060176312763
+2020-01-04 14:41:32,421:__main__:INFO:Starting TESTING 7
+2020-01-04 14:43:31,071:__main__:INFO:epoch: 7, cost_test: 23829.70703125
+2020-01-04 14:43:31,072:__main__:INFO:epoch: 7, accuracy_test: 0.6737006828528073
+2020-01-04 14:43:31,072:__main__:INFO:Starting EPOCH 8
+2020-01-04 14:44:13,940:__main__:INFO:epoch: 8, cost_training: 763.0162963867188
+2020-01-04 14:44:13,945:__main__:INFO:epoch: 8, accuracy_training: 0.948082138705928
+2020-01-04 14:44:13,946:__main__:INFO:Starting VALIDATION 8
+2020-01-04 14:46:29,676:__main__:INFO:epoch: 8, cost_validation: 5693.6005859375
+2020-01-04 14:46:29,678:__main__:INFO:epoch: 8, accuracy_validation: 0.6673054810272135
+2020-01-04 14:46:29,678:__main__:INFO:Starting TESTING 8
+2020-01-04 14:48:35,514:__main__:INFO:epoch: 8, cost_test: 23482.318359375
+2020-01-04 14:48:35,515:__main__:INFO:epoch: 8, accuracy_test: 0.6727048558421851
+2020-01-04 14:48:35,515:__main__:INFO:Starting EPOCH 9
+2020-01-04 14:49:19,403:__main__:INFO:epoch: 9, cost_training: 777.626953125
+2020-01-04 14:49:19,409:__main__:INFO:epoch: 9, accuracy_training: 0.9515691592406044
+2020-01-04 14:49:19,409:__main__:INFO:Starting VALIDATION 9
+2020-01-04 14:51:33,583:__main__:INFO:epoch: 9, cost_validation: 5811.30029296875
+2020-01-04 14:51:33,585:__main__:INFO:epoch: 9, accuracy_validation: 0.6650057493292449
+2020-01-04 14:51:33,585:__main__:INFO:Starting TESTING 9
+2020-01-04 14:53:44,806:__main__:INFO:epoch: 9, cost_test: 23637.09765625
+2020-01-04 14:53:44,807:__main__:INFO:epoch: 9, accuracy_test: 0.6705235204855842
+2020-01-04 14:53:44,808:__main__:INFO:Starting EPOCH 10
+2020-01-04 14:54:28,470:__main__:INFO:epoch: 10, cost_training: 785.41162109375
+2020-01-04 14:54:28,476:__main__:INFO:epoch: 10, accuracy_training: 0.9453700116234017
+2020-01-04 14:54:28,478:__main__:INFO:Starting VALIDATION 10
+2020-01-04 14:56:39,260:__main__:INFO:epoch: 10, cost_validation: 5974.75390625
+2020-01-04 14:56:39,262:__main__:INFO:epoch: 10, accuracy_validation: 0.6684553468761978
+2020-01-04 14:56:39,262:__main__:INFO:Starting TESTING 10
+2020-01-04 14:58:45,757:__main__:INFO:epoch: 10, cost_test: 23736.796875
+2020-01-04 14:58:45,759:__main__:INFO:epoch: 10, accuracy_test: 0.6719935508345979
+2020-01-04 14:58:45,759:__main__:INFO:Starting EPOCH 11
+2020-01-04 14:59:34,873:__main__:INFO:epoch: 11, cost_training: 809.1245727539062
+2020-01-04 14:59:34,874:__main__:INFO:epoch: 11, accuracy_training: 0.9445951181712514
+2020-01-04 14:59:34,875:__main__:INFO:Starting VALIDATION 11
+2020-01-04 15:02:03,643:__main__:INFO:epoch: 11, cost_validation: 6055.8427734375
+2020-01-04 15:02:03,645:__main__:INFO:epoch: 11, accuracy_validation: 0.6761211192027596
+2020-01-04 15:02:03,645:__main__:INFO:Starting TESTING 11
+2020-01-04 15:04:12,661:__main__:INFO:epoch: 11, cost_test: 24202.26953125
+2020-01-04 15:04:12,663:__main__:INFO:epoch: 11, accuracy_test: 0.6720883915022762
+2020-01-04 15:04:12,663:__main__:INFO:Starting EPOCH 12
+2020-01-04 15:05:01,548:__main__:INFO:epoch: 12, cost_training: 810.50048828125
+2020-01-04 15:05:01,554:__main__:INFO:epoch: 12, accuracy_training: 0.9476946919798528
+2020-01-04 15:05:01,554:__main__:INFO:Starting VALIDATION 12
+2020-01-04 15:07:28,701:__main__:INFO:epoch: 12, cost_validation: 6174.0791015625
+2020-01-04 15:07:28,703:__main__:INFO:epoch: 12, accuracy_validation: 0.6719049444231506
+2020-01-04 15:07:28,703:__main__:INFO:Validation accuracy stopped improving, stopping training early after 12 epochs!
+2020-01-04 15:07:28,703:__main__:INFO:check pointing model...
+2020-01-04 15:13:39,643:__main__:INFO:model checkpoint complete!

@@ -96,9 +96,7 @@ def split_batch_eval(data, indices, num_entities):
 
 
 def fill_feed_dict_evaluate(batches, train_both, batch_placeholders, label_placeholders, corrupt_placeholder):
-
     feed_dict = {corrupt_placeholder: [train_both and np.random.random() > 0.5]}
-
     logger.debug(f'batches: {batches}')
 
     for i in range(len(batch_placeholders)):
