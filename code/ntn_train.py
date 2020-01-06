@@ -25,7 +25,7 @@ stream_handler.setLevel(logging.INFO)
 stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 
-file_handler = logging.FileHandler('rntn_train_validate_and_test_wordnet_experiment.log')
+file_handler = logging.FileHandler('rntn_train_validate_and_test_freebase_experiment.log')
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
