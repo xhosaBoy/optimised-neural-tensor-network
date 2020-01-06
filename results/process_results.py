@@ -63,7 +63,7 @@ def write_results(results_cost_baseline,
                   results_cost_experiment,
                   results_accuracy_experiment):
 
-    with open('rntn_train_validate_and_test_wordnet_cost.csv', mode='w') as resultsfile:
+    with open('rntn_train_validate_and_test_freebase_cost.csv', mode='w') as resultsfile:
         csv_writer = csv.writer(resultsfile)
         csv_writer.writerow(['cost_training_baseline',
                              'cost_validation_baseline',
@@ -77,7 +77,7 @@ def write_results(results_cost_baseline,
             logger.debug(f'results_cost: {results_cost}')
             csv_writer.writerow(results_cost)
 
-    with open('rntn_train_validate_and_test_wordnet_accuracy.csv', mode='w') as resultsfile:
+    with open('rntn_train_validate_and_test_freebase_accuracy.csv', mode='w') as resultsfile:
         csv_writer = csv.writer(resultsfile)
         csv_writer.writerow(['accuracy_training_baseline',
                              'accuracy_validation_baseline',
@@ -93,8 +93,8 @@ def write_results(results_cost_baseline,
 
 
 def main():
-    path_baseline = get_path('rntn_train_validate_and_test_wordnet_baseline.log', 'results')
-    path_experiment = get_path('rntn_train_validate_and_test_wordnet_experiment.log', 'results')
+    path_baseline = get_path('rntn_train_validate_and_test_freebase_baseline.log', 'results')
+    path_experiment = get_path('rntn_train_validate_and_test_freebase_experiment.log', 'results')
 
     logger.info('Parsing results...')
     results_cost_baseline, results_accuracy_baseline = parse_results(path_baseline)
